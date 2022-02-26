@@ -10,6 +10,7 @@ repositories {
 }
 
 kotlin {
+    val libPath = "${projectDir.path}/../c-library"
     val hostOs = System.getProperty("os.name")
     val isMingwX64 = hostOs.startsWith("Windows")
     val nativeTarget = when {
@@ -20,6 +21,20 @@ kotlin {
     }
 
     nativeTarget.apply {
+        compilations.getByName("main") {
+            cinterops {
+                // create klib (0_nativelib.knm) to call C-Functions
+                val customNativeLib by creating {
+                    println("create customNativeLib with path: $libPath")
+                    defFile(File(projectDir, "src/nativeInterop/cinterop/nativelib.def"))
+                    compilerOpts.add("-I$libPath")
+                }
+                kotlinOptions.freeCompilerArgs = listOf(
+                    "-include-binary", "$libPath/cmake-build-debug/libNative_Interfaces.a"
+                )
+            }
+        }
+
         binaries {
             executable {
                 entryPoint = "main"

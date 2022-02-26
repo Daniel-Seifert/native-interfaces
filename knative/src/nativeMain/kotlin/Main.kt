@@ -1,3 +1,5 @@
+import nativelib.hello
+
 fun main() {
-    println("Hello, Kotlin/Native!")
+    hello()
 }
