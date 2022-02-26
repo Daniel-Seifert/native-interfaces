@@ -30,10 +30,16 @@ fun main() {
         nativelib.greetAll(array, persons.size)
 
         "Passing C array to Kotlin native".printBanner()
-        /*nativelib.getPersonsToGreet()
-        receiveStructArrayFromC(library).forEach {
-            println("Received person: ${it.firstname}, ${it.lastname}")
-        }*/
+        val personsFromC = alloc<CPointerVar<Person>>()
+        val personsInCAmount = alloc<IntVar>()
+        nativelib.getPersonsToGreet(personsFromC.ptr, personsInCAmount.ptr)
+        println("${personsInCAmount.value} Persons at ${personsFromC.value}")
+        (0 until personsInCAmount.value).forEach { index ->
+            personsFromC.value?.get(index)?.let { person ->
+                println("$index: ${person.firstname?.toKString()}, ${person.lastname?.toKString()}")
+            }
+        }
+        nativelib.freePersonsToGreet(personsFromC.value)
 
         // Sleep to assure callback is invoked
         sleep(2)
