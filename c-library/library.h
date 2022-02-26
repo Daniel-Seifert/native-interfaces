@@ -11,5 +11,7 @@ typedef struct Person {
 void greet(char *firstname, char *lastname);
 void greetAll(Person *persons, int size);
 void greetDelayed(const DelayedGreeting pfn);
+void getPersonsToGreet(Person **persons, int *size);
+void freePersonsToGreet(Person *personsToFree);
 
 #endif //NATIVE_INTERFACES_LIBRARY_H
