@@ -2,21 +2,30 @@
 
 #include <stdio.h>
 #include <unistd.h>
-
-int msleep(unsigned int tms);
+#include <pthread.h>
 
 void greet(char *firstname, char *lastname) {
     printf("Hello: %s %s\n", firstname, lastname);
+    fflush(stdout);
 }
 
-void greetDelayed(const DelayedGreeting pfn) {
-    msleep(1000);
-    char firstname[] = "Parker";
-    char lastname[] = "Peter";
+void greetAll(Person *persons, int size){
+    int i;
+    for (i=0; i < size; i++) {
+        greet(persons[i].firstname, persons[i].lastname);
+    }
+}
+
+void greetingCallback(const DelayedGreeting pfn) {
+    sleep(1);
+    char firstname[] = "Black";
+    char lastname[] = "Panther";
 
     (*pfn)((char *) &firstname, (char *) &lastname);
 }
 
-int msleep(unsigned int tms) {
-    return usleep(tms * 1000);
+void greetDelayed(const DelayedGreeting pfn) {
+    pthread_t thread1;
+    pthread_create(&thread1, NULL, (void *(*)(void *)) greetingCallback, (void*) pfn);
+    pthread_detach(thread1);
 }
