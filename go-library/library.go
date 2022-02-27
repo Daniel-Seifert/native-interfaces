@@ -69,10 +69,21 @@ func greetDelayed(callback C.DelayedGreeting) {
 
 //export getPersonsToGreet
 func getPersonsToGreet(persons **C.Person, size *C.int) {
-	//TODO
+	type CPerson struct {
+		firstname *C.char
+		lastname  *C.char
+	}
+	p := []*CPerson{
+		{firstname: C.CString("Bruce"), lastname: C.CString("Banner")},
+		{firstname: C.CString("Doctor"), lastname: C.CString("Strange")},
+		{firstname: C.CString("Captain"), lastname: C.CString("America")},
+	}
+
+	*size = C.int(3)
+	*persons = (*C.Person)(p[0])
 }
 
 //export freePersonsToGreet
 func freePersonsToGreet(persons *C.Person) {
-	//TODO
+	//C.free(unsafe.Pointer(persons))
 }
