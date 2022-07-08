@@ -25,12 +25,14 @@ kotlin {
             cinterops {
                 // create klib (0_nativelib.knm) to call C-Functions
                 val customNativeLib by creating {
-                    println("create customNativeLib with path: $libPath")
+                    println("create customNativeLib with path: $libPath for target: $target")
                     defFile(File(projectDir, "src/nativeInterop/cinterop/nativelib.def"))
                     compilerOpts.add("-I$libPath")
+                    compilerOpts.add("-shared")
                 }
+
                 kotlinOptions.freeCompilerArgs = listOf(
-                    "-include-binary", "$libPath/cmake-build-debug/libNative_Interfaces.a"
+                    "-include-binary", "$libPath/manual_compiled_archives/Native_Interfaces.a"
                 )
             }
         }
@@ -41,8 +43,35 @@ kotlin {
             }
         }
     }
+    val rpi2b = linuxArm32Hfp("raspberrypi2b")
+    rpi2b.apply {
+
+        compilations.getByName("main") {
+            cinterops {
+
+                val customNativeLibArm32 by creating {
+                    println("create customNativeLib with path: $libPath for $target")
+                    defFile(File(projectDir, "src/nativeInterop/cinterop/nativelib32.def"))
+                    compilerOpts.add("-I$libPath")
+                    includeDirs("$libPath", "$libPath/cmake-debug-build")
+
+                }
+            }
+
+            kotlinOptions.freeCompilerArgs = listOf(
+                "-include-binary", "$libPath/manual_compiled_archives/Native_Interfaces_RPI.a"
+            )
+        }
+        binaries {
+            executable("RPI") {
+                entryPoint = "main"
+            }
+        }
+    }
+
     sourceSets {
         val nativeMain by getting
-        val nativeTest by getting
+        //val nativeTest by getting
+        val raspberrypi2bMain by getting
     }
 }

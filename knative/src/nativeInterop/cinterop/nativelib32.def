@@ -1,0 +1,3 @@
+headers = library.h
+package = nativelib
+# linkerOpts = -L`pwd`/../c-library/cmake-build-debug

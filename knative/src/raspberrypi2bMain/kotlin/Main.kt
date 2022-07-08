@@ -1,6 +1,7 @@
 import kotlinx.cinterop.*
 import nativelib.*
-import platform.posix.sleep
+
+ import platform.posix.sleep
 
 fun main() {
     memScoped {
